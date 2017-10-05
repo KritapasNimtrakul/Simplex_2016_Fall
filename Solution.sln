@@ -126,6 +126,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "E04-Delivery", "E04-Deliver
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "3D Primitives_HW", "3D Primitives_HW\3D Primitives_HW.vcxproj", "{604A76DE-54B9-4A75-9C2F-640A11D16392}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "E04 Deliverable", "E04 Deliverable\E04 Deliverable.vcxproj", "{6AF00F86-CC23-47E2-B62E-FAB39897C733}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -290,6 +292,10 @@ Global
 		{604A76DE-54B9-4A75-9C2F-640A11D16392}.Debug|x86.Build.0 = Debug|Win32
 		{604A76DE-54B9-4A75-9C2F-640A11D16392}.Release|x86.ActiveCfg = Release|Win32
 		{604A76DE-54B9-4A75-9C2F-640A11D16392}.Release|x86.Build.0 = Release|Win32
+		{6AF00F86-CC23-47E2-B62E-FAB39897C733}.Debug|x86.ActiveCfg = Debug|Win32
+		{6AF00F86-CC23-47E2-B62E-FAB39897C733}.Debug|x86.Build.0 = Debug|Win32
+		{6AF00F86-CC23-47E2-B62E-FAB39897C733}.Release|x86.ActiveCfg = Release|Win32
+		{6AF00F86-CC23-47E2-B62E-FAB39897C733}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
