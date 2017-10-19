@@ -10,7 +10,7 @@ void Application::InitVariables(void)
 	//Set the position and target of the camera
 	//(I'm at [0,0,10], looking at [0,0,0] and up is the positive Y axis)
 	m_pCameraMngr->SetPositionTargetAndUp(AXIS_Z * 10.0f, ZERO_V3, AXIS_Y);
-	
+
 	//init the mesh
 	m_pMesh = new MyMesh();
 	m_pMesh->GenerateCone(0.5f, 1.0f, 7, C_RED);
@@ -33,7 +33,15 @@ void Application::Display(void)
 
 	matrix4 m4View = m_pCameraMngr->GetViewMatrix(); //view Matrix
 	matrix4 m4Projection = m_pCameraMngr->GetProjectionMatrix(); //Projection Matrix
+
 	
+	matrix4 mRotX = glm::rotate(IDENTITY_M4, m_v3Rotation.x, vector3(1.0f, 0.0f, 0.0f));
+	matrix4 mRotY = glm::rotate(IDENTITY_M4, m_v3Rotation.y, vector3(0.0f, 1.0f, 0.0f));
+	matrix4 mRotZ = glm::rotate(IDENTITY_M4, m_v3Rotation.z, vector3(0.0f, 0.0f, 1.0f));
+	//matrix4 mRotation = glm::rotate(IDENTITY_M4, 60.0f, vector3(0.0f, 0.0f, 1.0f));
+	//glm::quat q1 = glm::angleAxis(45.0f, vector3(m_v3Rotation.x, m_v3Rotation.y, m_v3Rotation.z));
+	matrix4 mModel = mRotX * mRotY * mRotZ;
+
 	//Get a timer
 	static uint uClock = m_pSystem->GenClock();
 	float fTimer = m_pSystem->GetTimeSinceStart(uClock);
@@ -43,7 +51,7 @@ void Application::Display(void)
 	matrix4 m4Model;
 	for (uint i = 0; i < 2500; ++i)
 		m4Model = m4Rotation * glm::translate(IDENTITY_M4, vector3(2.5f, 0.0f, 0.0f)) * glm::transpose(m4Rotation);
-	
+
 	/*
 	//extra part, how to rotate around a point (in this case the base of the cone)
 	matrix4 m4Translation = glm::translate(IDENTITY_M4, vector3(0.0f, 0.5f, 0.0f));
@@ -52,8 +60,8 @@ void Application::Display(void)
 	*/
 
 	// render the object
-	m_pMesh->Render(m4Projection, m4View, m4Model);
-	
+	m_pMesh->Render(m4Projection, m4View, mModel);
+
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();
 
@@ -76,16 +84,16 @@ void Application::Display(void)
 	m_pMeshMngr->Print("Time: ");
 	m_pMeshMngr->PrintLine(std::to_string(fTimer), C_RED);
 #pragma endregion
-		
+
 	//render list call
 	m_uRenderCallCount = m_pMeshMngr->Render();
 
 	//clear the render list
 	m_pMeshMngr->ClearRenderList();
-	
+
 	//draw gui
 	DrawGUI();
-	
+
 	//end the current frame (internally swaps the front and back buffers)
 	m_pWindow->display();
 }
