@@ -25,6 +25,10 @@ void Application::InitVariables(void)
 	m_pMesh2 = new MyMesh();
 	m_pMesh2->GenerateCone(0.5f, 1.0f, 6, C_GREEN);
 
+
+	MyMesh* m_pMesh3 = new MyMesh();
+	m_pMesh->GenerateTorus(3.0f, 2.0f, 6, 7, C_RED);
+
 	//create a new camera
 	m_pCamera = new MyCamera();
 }
@@ -58,10 +62,16 @@ void Application::Display(void)
 	m_pCamera->SetTarget(vector3(fPos, 0.0f, 9.0f));
 	fPos -= 0.01f;
 
+	matrix4 m4Projection = m_pCamera->GetProjectionMatrix();
+	matrix4 m4View = glm::lookAt((vector3(0,30,0) + m_v3Camera),vector3(0,0,0),vector3(0,0,-1))/* * m_pCamera->GetViewMatrix()*/;
+	matrix4 m4Model = ToMatrix4(m_qArcBall);
+
+	m_pMesh->Render(m4Projection,m4View, m4Model);
+
 	//draw the primitive
 	//m_pMesh->Render(m_pCamera->GetProjectionMatrix(), m_pCamera->GetViewMatrix(), ToMatrix4(m_qArcBall));
 	//m_pMesh->Render(m_pCamera, ToMatrix4(m_qArcBall));
-	m_pMesh2->Render(m_pCamera, glm::translate(vector3(0.0f, 0.0f, -5.0f)));
+	//m_pMesh2->Render(m_pCamera, glm::translate(vector3(0.0f, 0.0f, -5.0f)));
 
 	//render list call
 	m_uRenderCallCount = m_pMeshMngr->Render();
@@ -85,6 +95,9 @@ void Application::Release(void)
 
 	//release primitive
 	SafeDelete(m_pMesh2);
+
+	//release primitive
+	SafeDelete(m_pMesh3);
 
 	//release the camera
 	SafeDelete(m_pCamera);
