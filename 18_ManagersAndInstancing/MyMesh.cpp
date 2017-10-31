@@ -425,6 +425,9 @@ void MyMesh::Render(matrix4 a_mProjection, matrix4 a_mView, matrix4 a_mModel)
 
 	glBindVertexArray(0);// Unbind VAO so it does not get in the way of other objects
 }
+
+
+
 void Simplex::MyMesh::Render(MyCamera * a_pCamera, std::vector<matrix4> a_ToWorldList)
 {
 	int nElements = a_ToWorldList.size();//count elements to render

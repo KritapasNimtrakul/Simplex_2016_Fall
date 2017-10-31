@@ -19,6 +19,9 @@ void Application::InitVariables(void)
 		vector3(0.0f, 3.0f, 19.0f), //where what I'm looking at is
 		AXIS_Y);					//what is up
 
+	m_pMesh = new MyMesh();
+	m_pMesh->GenerateCylinder(1.0f, 2.0f, 6.0f, C_PURPLE);
+
 	//Get the singleton
 	m_pMyMeshMngr = MyMeshManager::GetInstance();
 	m_pMyMeshMngr->SetCamera(m_pCamera);
@@ -37,6 +40,22 @@ void Application::Update(void)
 	CameraRotation();
 
 	//Add objects to the Manager
+
+	
+	for (int i = 0; i < 6; i++)
+	{
+		matrix4* pMatrix = new matrix4();
+		*pMatrix = glm::translate(IDENTITY_M4, vector3(i*2.0f, 0.0f, 0.0f));
+		mList.push_back(glm::translate(IDENTITY_M4, vector3(i*2.0f, 0.0f, 0.0f)) * ToMatrix4(m_qArcBall));
+	}
+
+	/*
+	for (int i = 0; i < 6; i++)
+	{
+		m_pMesh->Render(m_pCamera, ToMatrix4(m_qArcBall));
+	}
+
+	/*
 	uint nCount = 0;
 	for (int j = -420; j < 420; j += 2)
 	{
@@ -47,11 +66,16 @@ void Application::Update(void)
 		}
 	}
 	m_pMeshMngr->Print("Objects: " + std::to_string(nCount) + "\n", C_BLUE);
+	*/
 }
+
 void Application::Display(void)
 {
 	//Clear the screen
 	ClearScreen();
+
+
+	m_pMesh->Render(m_pCamera, mList);
 
 	//Render the list of MyMeshManager
 	m_pMyMeshMngr->Render();
@@ -78,6 +102,12 @@ void Application::Release(void)
 
 	//release the camera
 	SafeDelete(m_pCamera);
+	/*
+	for(int i = 0;i<6;i++)
+	{
+		SafeDelete(mList[i]);
+	}
+	*/
 
 	//release GUI
 	ShutdownGUI();
