@@ -25,6 +25,8 @@ void Application::InitVariables(void)
 	//Get the singleton
 	m_pMyMeshMngr = MyMeshManager::GetInstance();
 	m_pMyMeshMngr->SetCamera(m_pCamera);
+
+	m_pRB = new MyrigidBody(m_pMesh);
 	
 	
 }
@@ -42,12 +44,14 @@ void Application::Update(void)
 	//Add objects to the Manager
 
 	
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		matrix4* pMatrix = new matrix4();
 		*pMatrix = glm::translate(IDENTITY_M4, vector3(i*2.0f, 0.0f, 0.0f));
 		mList.push_back(glm::translate(IDENTITY_M4, vector3(i*2.0f, 0.0f, 0.0f)) * ToMatrix4(m_qArcBall));
 	}
+
+
 
 	/*
 	for (int i = 0; i < 6; i++)
@@ -74,6 +78,7 @@ void Application::Display(void)
 	//Clear the screen
 	ClearScreen();
 
+	m_pRB->Render(m_pCamera, mList[0]);
 
 	m_pMesh->Render(m_pCamera, mList);
 
@@ -102,6 +107,7 @@ void Application::Release(void)
 
 	//release the camera
 	SafeDelete(m_pCamera);
+	SafeDelete(m_pRB);
 	/*
 	for(int i = 0;i<6;i++)
 	{

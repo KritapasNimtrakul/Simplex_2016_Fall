@@ -9,6 +9,7 @@ Date: 2017/05
 
 #include "ControllerConfiguration.h"
 #include "imgui\ImGuiObject.h"
+#include "MyRigidBody.h"
 
 #include "MyMeshManager.h"
 namespace Simplex
@@ -16,6 +17,7 @@ namespace Simplex
 
 class Application
 {
+	MyrigidBody* m_pRB = nullptr;
 	MyMesh* m_pMesh = nullptr;
 	std::vector<matrix4> mList;
 	MyCamera* m_pCamera = nullptr;

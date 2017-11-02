@@ -106,6 +106,7 @@ public:
 	OUTPUT: ---
 	*/
 	void Render(matrix4 a_mProjection, matrix4 a_mView, matrix4 a_mModel);
+	std::vector<vector3> GetVertexList(void);
 	/*
 	USAGE: Renders the mesh on the specified position by the
 	provided camera view and projection
