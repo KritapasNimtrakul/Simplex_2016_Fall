@@ -368,7 +368,17 @@ void Application::CameraRotation(float a_fSpeed)
 		fDeltaMouse = static_cast<float>(MouseY - CenterY);
 		fAngleX += fDeltaMouse * a_fSpeed;
 	}
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+	{
+		quaternion q1 = glm::angleAxis(fAngleX, vector3(1.0f, 0.0f, 0.0f));
+		m_qOrientation = m_qOrientation * q1;
+
+		quaternion q2 = glm::angleAxis(fAngleY, vector3(0.0f, 1.0f, 0.0f));
+		m_qOrientation = m_qOrientation * q2;
+	}
 	//Change the Yaw and the Pitch of the camera
+
 	SetCursorPos(CenterX, CenterY);//Position the mouse in the center
 }
 //Keyboard
@@ -377,6 +387,7 @@ void Application::ProcessKeyboard(void)
 	/*
 	This is used for things that are continuously happening,
 	for discreet on/off use ProcessKeyboardPressed/Released
+
 	*/
 #pragma region Camera Position
 	float fSpeed = 0.1f;
@@ -385,6 +396,30 @@ void Application::ProcessKeyboard(void)
 
 	if (fMultiplier)
 		fSpeed *= 5.0f;
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+	{
+		m_pCameraMngr->MoveForward(fSpeed);
+		m_v3Camera.z += fSpeed;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+	{
+		m_pCameraMngr->MoveForward(-fSpeed);
+		m_v3Camera.z -= fSpeed;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	{
+		m_pCameraMngr->MoveSideways(-fSpeed);
+		m_v3Camera.x += fSpeed;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	{
+		m_pCameraMngr->MoveSideways(fSpeed);
+		m_v3Camera.x -= fSpeed;
+	}
+
+
+
 #pragma endregion
 }
 //Joystick

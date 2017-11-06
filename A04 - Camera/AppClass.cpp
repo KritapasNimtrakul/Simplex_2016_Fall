@@ -33,13 +33,23 @@ void Application::Update(void)
 
 	//Is the first person camera active?
 	CameraRotation();
+	
+	// get the orientation matrix to apply to model
+	matrix4 orinetation = ToMatrix4 (m_qOrientation);
+
+	
+	// calculate translation base on camera position
+	m_pCamera->SetPosition(m_v3Camera);
+	m_pCamera->SetTarget(vector3(m_v3Camera.x, 0.0f, m_v3Camera.z+10.0f));
+	m_v3Camera = m_pCamera->GetPosition();
+	
 
 	//Add objects to the Manager
 	for (int j = -50; j < 50; j += 2)
 	{
 		for (int i = -50; i < 50; i += 2)
 		{
-			m_pMyMeshMngr->AddConeToRenderList(glm::translate(vector3(i, 0.0f, j)));
+			m_pMyMeshMngr->AddConeToRenderList(orinetation* glm::translate(vector3(i, 0.0f, j)));
 		}
 	}
 }
@@ -47,6 +57,8 @@ void Application::Display(void)
 {
 	//Clear the screen
 	ClearScreen();
+	
+
 
 	//clear the render list
 	m_pMeshMngr->ClearRenderList();

@@ -3,7 +3,7 @@ using namespace Simplex;
 void Application::InitVariables(void)
 {
 	////Change this to your name and email
-	//m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu";
+	//m_sProgrammer = "Kritapas Nimtrakul - kxn9945@rit.edu";
 
 	////Alberto needed this at this position for software recording.
 	//m_pWindow->setPosition(sf::Vector2i(710, 0));
@@ -97,7 +97,7 @@ void Application::Release(void)
 	SafeDelete(m_pMesh2);
 
 	//release primitive
-	SafeDelete(m_pMesh3);
+	//SafeDelete(m_pMesh3);
 
 	//release the camera
 	SafeDelete(m_pCamera);

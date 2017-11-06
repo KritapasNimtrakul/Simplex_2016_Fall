@@ -17,6 +17,7 @@ namespace Simplex
 
 class Application
 {
+	uint m_uCylinder = 0;
 	MyrigidBody* m_pRB = nullptr;
 	MyMesh* m_pMesh = nullptr;
 	std::vector<matrix4> mList;

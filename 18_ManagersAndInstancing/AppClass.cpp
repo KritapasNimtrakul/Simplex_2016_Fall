@@ -26,7 +26,13 @@ void Application::InitVariables(void)
 	m_pMyMeshMngr = MyMeshManager::GetInstance();
 	m_pMyMeshMngr->SetCamera(m_pCamera);
 
-	m_pRB = new MyrigidBody(m_pMesh);
+	//MyMesh* pMesh = new MyMesh();
+	//pMesh->GenerateCylinder(0.5f, 1.0f, 10, C_RED);
+
+	m_pMyMeshMngr->GenerateCylinder(0.5f, 1.0f, 10, C_RED);
+
+	//m_uCylinder = m_pMyMeshMngr->AddMesh(pMesh);
+	//m_pRB = new MyrigidBody(m_pMesh);
 	
 	
 }
@@ -43,13 +49,23 @@ void Application::Update(void)
 
 	//Add objects to the Manager
 
-	
+	for (uint i = 0; i < 500;++i)
+	{
+		m_pMyMeshMngr->AddSphereToRenderList(glm::translate(vector3(0.5f*i, 0.25*i, -1.0f*i)));
+	}
+
+	//MyMesh* pMesh = m_pMyMeshMngr->GetMesh(m_uCylinder);
+
+	//m_pMyMeshMngr->AddMeshToRenderList(m_uCylinder, ToMatrix4(m_qArcBall));
+
+	/*
 	for (int i = 0; i < 1; i++)
 	{
 		matrix4* pMatrix = new matrix4();
 		*pMatrix = glm::translate(IDENTITY_M4, vector3(i*2.0f, 0.0f, 0.0f));
 		mList.push_back(glm::translate(IDENTITY_M4, vector3(i*2.0f, 0.0f, 0.0f)) * ToMatrix4(m_qArcBall));
 	}
+	*/
 
 
 
@@ -58,7 +74,7 @@ void Application::Update(void)
 	{
 		m_pMesh->Render(m_pCamera, ToMatrix4(m_qArcBall));
 	}
-
+	*/
 	/*
 	uint nCount = 0;
 	for (int j = -420; j < 420; j += 2)
@@ -78,7 +94,7 @@ void Application::Display(void)
 	//Clear the screen
 	ClearScreen();
 
-	m_pRB->Render(m_pCamera, mList[0]);
+	//m_pRB->Render(m_pCamera, mList[0]);
 
 	m_pMesh->Render(m_pCamera, mList);
 
@@ -107,7 +123,7 @@ void Application::Release(void)
 
 	//release the camera
 	SafeDelete(m_pCamera);
-	SafeDelete(m_pRB);
+	//SafeDelete(m_pRB);
 	/*
 	for(int i = 0;i<6;i++)
 	{
