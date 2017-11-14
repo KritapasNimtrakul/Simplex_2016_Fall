@@ -287,6 +287,88 @@ uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 	(eSATResults::SAT_NONE has a value of 0)
 	*/
 
+	//Calculate the 8 corners of the cube
+	vector3 v3Corner[8];
+	//Back square
+	v3Corner[0] = m_v3MinG;
+	v3Corner[1] = vector3(m_v3MaxG.x, m_v3MinG.y, m_v3MinG.z);
+	v3Corner[2] = vector3(m_v3MinG.x, m_v3MaxG.y, m_v3MinG.z);
+	v3Corner[3] = vector3(m_v3MaxG.x, m_v3MaxG.y, m_v3MinG.z);
+
+	//Front square
+	v3Corner[4] = vector3(m_v3MinG.x, m_v3MinG.y, m_v3MaxG.z);
+	v3Corner[5] = vector3(m_v3MaxG.x, m_v3MinG.y, m_v3MaxG.z);
+	v3Corner[6] = vector3(m_v3MinG.x, m_v3MaxG.y, m_v3MaxG.z);
+	v3Corner[7] = m_v3MaxG;
+
+	vector3 v3CornerO[8];
+	//Back square
+	v3CornerO[0] = a_pOther->m_v3MinG;
+	v3CornerO[1] = vector3(a_pOther->m_v3MaxG.x, a_pOther->m_v3MinG.y, a_pOther->m_v3MinG.z);
+	v3CornerO[2] = vector3(a_pOther->m_v3MinG.x, a_pOther->m_v3MaxG.y, a_pOther->m_v3MinG.z);
+	v3CornerO[3] = vector3(a_pOther->m_v3MaxG.x, a_pOther->m_v3MaxG.y, a_pOther->m_v3MinG.z);
+
+	//Front square
+	v3CornerO[4] = vector3(a_pOther->m_v3MinG.x, a_pOther->m_v3MinG.y, a_pOther->m_v3MaxG.z);
+	v3CornerO[5] = vector3(a_pOther->m_v3MaxG.x, a_pOther->m_v3MinG.y, a_pOther->m_v3MaxG.z);
+	v3CornerO[6] = vector3(a_pOther->m_v3MinG.x, a_pOther->m_v3MaxG.y, a_pOther->m_v3MaxG.z);
+	v3CornerO[7] = a_pOther->m_v3MaxG;
+
+
+	vector3 axis[15];
+	// objA
+	axis[0] = v3Corner[1] - v3Corner[0];
+	axis[1] = v3Corner[2] - v3Corner[0];
+	axis[2] = v3Corner[3] - v3Corner[0];
+
+	//objB
+	axis[3] = v3CornerO[1] - v3CornerO[0];
+	axis[4] = v3CornerO[2] - v3CornerO[0];
+	axis[5] = v3CornerO[3] - v3CornerO[0];
+
+	// cross product
+	axis[6] = vector3(axis[0].y * axis[3].z - axis[0].z * axis[3].y, axis[0].z*axis[3].x - axis[0].x*axis[3].z, axis[0].x*axis[3].y - axis[0].y*axis[3].x);
+	axis[7] = vector3(axis[0].y * axis[4].z - axis[0].z * axis[4].y, axis[0].z*axis[4].x - axis[0].x*axis[4].z, axis[0].x*axis[4].y - axis[0].y*axis[4].x);
+	axis[8] = vector3(axis[0].y * axis[5].z - axis[0].z * axis[5].y, axis[0].z*axis[5].x - axis[0].x*axis[5].z, axis[0].x*axis[5].y - axis[0].y*axis[5].x);
+	
+	axis[9] = vector3(axis[1].y * axis[3].z - axis[1].z * axis[3].y, axis[1].z*axis[3].x - axis[1].x*axis[3].z, axis[1].x*axis[3].y - axis[1].y*axis[3].x);
+	axis[11] = vector3(axis[1].y * axis[4].z - axis[1].z * axis[4].y, axis[1].z*axis[4].x - axis[1].x*axis[4].z, axis[1].x*axis[4].y - axis[1].y*axis[4].x);
+	axis[11] = vector3(axis[1].y * axis[5].z - axis[1].z * axis[5].y, axis[1].z*axis[5].x - axis[1].x*axis[5].z, axis[1].x*axis[5].y - axis[1].y*axis[5].x);
+	
+	axis[12] = vector3(axis[2].y * axis[3].z - axis[2].z * axis[3].y, axis[2].z*axis[3].x - axis[2].x*axis[3].z, axis[2].x*axis[3].y - axis[2].y*axis[3].x);
+	axis[13] = vector3(axis[2].y * axis[4].z - axis[2].z * axis[4].y, axis[2].z*axis[4].x - axis[2].x*axis[4].z, axis[2].x*axis[4].y - axis[2].y*axis[4].x);
+	axis[14] = vector3(axis[2].y * axis[5].z - axis[2].z * axis[5].y, axis[2].z*axis[5].x - axis[2].x*axis[5].z, axis[2].x*axis[5].y - axis[2].y*axis[5].x);
+
+
+	vector3 edge[6];
+	edge[0] = (v3Corner[1] + v3Corner[0]) / 2.0f;
+	edge[1] = (v3Corner[2] + v3Corner[0]) / 2.0f;
+
+	for (uint i = 0;i < 15;i++)
+	{
+		// dot product
+		float dotAMin = m_v3MinG.x * axis[i].x + m_v3MinG.y * axis[i].y + m_v3MinG.z * axis[i].z;
+		float dotAMax = m_v3MaxG.x * axis[i].x + m_v3MaxG.y * axis[i].y + m_v3MaxG.z * axis[i].z;
+
+		float dotBMin = a_pOther->m_v3MinG.x * axis[i].x + a_pOther->m_v3MinG.y * axis[i].y + a_pOther->m_v3MinG.z * axis[i].z;
+		float dotBMax = a_pOther->m_v3MaxG.x * axis[i].x + a_pOther->m_v3MaxG.y * axis[i].y + a_pOther->m_v3MaxG.z * axis[i].z;
+		
+		float overlapped1 = dotAMin - dotBMax; // overlap if this < 0
+		float overlapped2 = dotBMin - dotAMax; // overlap if this > 0
+		
+		if (overlapped1 < 0.0f || overlapped2 > 0.0f)
+		{
+
+		}
+		else 
+		{
+			return 1;
+		}
+
+	}
+	
+
+
 	//there is no axis test that separates this two objects
 	return eSATResults::SAT_NONE;
 }
