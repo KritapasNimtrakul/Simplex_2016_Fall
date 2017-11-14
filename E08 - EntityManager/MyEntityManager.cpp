@@ -4,6 +4,8 @@ using namespace Simplex;
 MyEntityManager* MyEntityManager::m_pInstance = nullptr;
 void MyEntityManager::Init(void)
 {
+	m_uEntityCount = 0;
+	m_entityList.clear();
 }
 void MyEntityManager::Release(void)
 {
@@ -68,6 +70,9 @@ void Simplex::MyEntityManager::Update(void)
 }
 void Simplex::MyEntityManager::AddEntity(String a_sFileName, String a_sUniqueID)
 {
+	MyEntity* entity = new MyEntity(a_sFileName,a_sUniqueID);
+	m_entityList.push_back(entity);
+	m_uEntityCount = m_entityList.size();
 
 }
 void Simplex::MyEntityManager::RemoveEntity(uint a_uIndex)
