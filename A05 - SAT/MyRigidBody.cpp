@@ -287,86 +287,104 @@ uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 	(eSATResults::SAT_NONE has a value of 0)
 	*/
 
-	//Calculate the 8 corners of the cube
-	vector3 v3Corner[8];
-	//Back square
-	v3Corner[0] = m_v3MinG;
-	v3Corner[1] = vector3(m_v3MaxG.x, m_v3MinG.y, m_v3MinG.z);
-	v3Corner[2] = vector3(m_v3MinG.x, m_v3MaxG.y, m_v3MinG.z);
-	v3Corner[3] = vector3(m_v3MaxG.x, m_v3MaxG.y, m_v3MinG.z);
+	float ra, rb;
+	matrix3 r,absR;
 
-	//Front square
-	v3Corner[4] = vector3(m_v3MinG.x, m_v3MinG.y, m_v3MaxG.z);
-	v3Corner[5] = vector3(m_v3MaxG.x, m_v3MinG.y, m_v3MaxG.z);
-	v3Corner[6] = vector3(m_v3MinG.x, m_v3MaxG.y, m_v3MaxG.z);
-	v3Corner[7] = m_v3MaxG;
-
-	vector3 v3CornerO[8];
-	//Back square
-	v3CornerO[0] = a_pOther->m_v3MinG;
-	v3CornerO[1] = vector3(a_pOther->m_v3MaxG.x, a_pOther->m_v3MinG.y, a_pOther->m_v3MinG.z);
-	v3CornerO[2] = vector3(a_pOther->m_v3MinG.x, a_pOther->m_v3MaxG.y, a_pOther->m_v3MinG.z);
-	v3CornerO[3] = vector3(a_pOther->m_v3MaxG.x, a_pOther->m_v3MaxG.y, a_pOther->m_v3MinG.z);
-
-	//Front square
-	v3CornerO[4] = vector3(a_pOther->m_v3MinG.x, a_pOther->m_v3MinG.y, a_pOther->m_v3MaxG.z);
-	v3CornerO[5] = vector3(a_pOther->m_v3MaxG.x, a_pOther->m_v3MinG.y, a_pOther->m_v3MaxG.z);
-	v3CornerO[6] = vector3(a_pOther->m_v3MinG.x, a_pOther->m_v3MaxG.y, a_pOther->m_v3MaxG.z);
-	v3CornerO[7] = a_pOther->m_v3MaxG;
-
-
-	vector3 axis[15];
-	// objA
-	axis[0] = v3Corner[1] - v3Corner[0];
-	axis[1] = v3Corner[2] - v3Corner[0];
-	axis[2] = v3Corner[3] - v3Corner[0];
-
-	//objB
-	axis[3] = v3CornerO[1] - v3CornerO[0];
-	axis[4] = v3CornerO[2] - v3CornerO[0];
-	axis[5] = v3CornerO[3] - v3CornerO[0];
-
-	// cross product
-	axis[6] = vector3(axis[0].y * axis[3].z - axis[0].z * axis[3].y, axis[0].z*axis[3].x - axis[0].x*axis[3].z, axis[0].x*axis[3].y - axis[0].y*axis[3].x);
-	axis[7] = vector3(axis[0].y * axis[4].z - axis[0].z * axis[4].y, axis[0].z*axis[4].x - axis[0].x*axis[4].z, axis[0].x*axis[4].y - axis[0].y*axis[4].x);
-	axis[8] = vector3(axis[0].y * axis[5].z - axis[0].z * axis[5].y, axis[0].z*axis[5].x - axis[0].x*axis[5].z, axis[0].x*axis[5].y - axis[0].y*axis[5].x);
+	//axis in global space
+	vector3 ua[3];
 	
-	axis[9] = vector3(axis[1].y * axis[3].z - axis[1].z * axis[3].y, axis[1].z*axis[3].x - axis[1].x*axis[3].z, axis[1].x*axis[3].y - axis[1].y*axis[3].x);
-	axis[11] = vector3(axis[1].y * axis[4].z - axis[1].z * axis[4].y, axis[1].z*axis[4].x - axis[1].x*axis[4].z, axis[1].x*axis[4].y - axis[1].y*axis[4].x);
-	axis[11] = vector3(axis[1].y * axis[5].z - axis[1].z * axis[5].y, axis[1].z*axis[5].x - axis[1].x*axis[5].z, axis[1].x*axis[5].y - axis[1].y*axis[5].x);
-	
-	axis[12] = vector3(axis[2].y * axis[3].z - axis[2].z * axis[3].y, axis[2].z*axis[3].x - axis[2].x*axis[3].z, axis[2].x*axis[3].y - axis[2].y*axis[3].x);
-	axis[13] = vector3(axis[2].y * axis[4].z - axis[2].z * axis[4].y, axis[2].z*axis[4].x - axis[2].x*axis[4].z, axis[2].x*axis[4].y - axis[2].y*axis[4].x);
-	axis[14] = vector3(axis[2].y * axis[5].z - axis[2].z * axis[5].y, axis[2].z*axis[5].x - axis[2].x*axis[5].z, axis[2].x*axis[5].y - axis[2].y*axis[5].x);
+	ua[0] = vector3(m_m4ToWorld * vector4(1.0f, 0, 0, 0));
+	ua[1] = vector3(m_m4ToWorld * vector4(0, 1.0f, 0, 0));
+	ua[2] = vector3(m_m4ToWorld * vector4(0, 0, 1.0f, 0));
 
 
-	vector3 edge[6];
-	edge[0] = (v3Corner[1] + v3Corner[0]) / 2.0f;
-	edge[1] = (v3Corner[2] + v3Corner[0]) / 2.0f;
+	vector3 ub[3];
 
-	for (uint i = 0;i < 15;i++)
+	ub[0] = vector3(a_pOther->m_m4ToWorld * vector4(1.0f, 0, 0, 0));
+	ub[1] = vector3(a_pOther->m_m4ToWorld * vector4(0, 1.0f, 0, 0));
+	ub[2] = vector3(a_pOther->m_m4ToWorld * vector4(0, 0, 1.0f, 0));
+
+
+	for (int i = 0; i < 3; i++) 
 	{
-		// dot product
-		float dotAMin = m_v3MinG.x * axis[i].x + m_v3MinG.y * axis[i].y + m_v3MinG.z * axis[i].z;
-		float dotAMax = m_v3MaxG.x * axis[i].x + m_v3MaxG.y * axis[i].y + m_v3MaxG.z * axis[i].z;
-
-		float dotBMin = a_pOther->m_v3MinG.x * axis[i].x + a_pOther->m_v3MinG.y * axis[i].y + a_pOther->m_v3MinG.z * axis[i].z;
-		float dotBMax = a_pOther->m_v3MaxG.x * axis[i].x + a_pOther->m_v3MaxG.y * axis[i].y + a_pOther->m_v3MaxG.z * axis[i].z;
-		
-		float overlapped1 = dotAMin - dotBMax; // overlap if this < 0
-		float overlapped2 = dotBMin - dotAMax; // overlap if this > 0
-		
-		if (overlapped1 < 0.0f || overlapped2 > 0.0f)
+		for (int j = 0; j < 3; j++)
 		{
-
+			r[i][j] = glm::dot(ua[i], ub[j]);
 		}
-		else 
-		{
-			return 1;
-		}
-
 	}
+
+	//vector3 t = a_pOther->m_v3Center - m_v3Center;
+	vector3 t = a_pOther->GetCenterGlobal() - GetCenterGlobal();
+	t = vector3(glm::dot(t, ua[0]), glm::dot(t, ua[1]), glm::dot(t, ua[2]));
+
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			absR[i][j] = abs(r[i][j]) + DBL_EPSILON;
+		}
+	}
+	// Test axes L = A0, L = A1, L = A2
+	for (int i = 0; i < 3; i++)
+	{
+		ra = m_v3HalfWidth[i];
+		rb = a_pOther->m_v3HalfWidth[0] * absR[i][0] + a_pOther->m_v3HalfWidth[1] * absR[i][1] + a_pOther->m_v3HalfWidth[2] * absR[i][2];
+		if (abs(t[i]) > ra + rb) return 1;
 	
+	}
+	// Test axes L = B0, L = B1, L = B2
+	for (int i = 0; i < 3; i++)
+	{
+		ra = m_v3HalfWidth[0] * absR[0][i] + m_v3HalfWidth[1] * absR[1][i] + m_v3HalfWidth[2] * absR[2][i];
+		rb = a_pOther->m_v3HalfWidth[i];
+		if (abs(t[0] * r[0][i] + t[1] * r[1][i] + t[2] * r[2][i]) > ra + rb) return 1;
+	}
+
+	// Test axis L = A0 x B0
+	ra = m_v3HalfWidth[1] * absR[2][0] + m_v3HalfWidth[2] * absR[1][0];
+	rb = a_pOther->m_v3HalfWidth[1] * absR[0][2] + a_pOther->m_v3HalfWidth[2] * absR[0][1];
+	if (abs(t[2] * r[1][0] - t[1] * r[2][0]) > ra + rb) return 1;
+
+
+	// Test axis L = A0 x B1
+	ra = m_v3HalfWidth[1] * absR[2][1] + m_v3HalfWidth[2] * absR[1][1];
+	rb = a_pOther->m_v3HalfWidth[0] * absR[0][2] + a_pOther->m_v3HalfWidth[2] * absR[0][0];
+	if (abs(t[2] * r[1][1] - t[1] * r[2][1]) > ra + rb) return 1;
+
+	// Test axis L = A0 x B2
+	ra = m_v3HalfWidth[1] * absR[2][2] + m_v3HalfWidth[2] * absR[1][2];
+	rb = a_pOther->m_v3HalfWidth[0] * absR[0][1] + a_pOther->m_v3HalfWidth[1] * absR[0][0];
+	if (abs(t[2] * r[1][2] - t[1] * r[2][2]) > ra + rb) return 1;
+
+	// Test axis L = A1 x B0
+	ra = m_v3HalfWidth[0] * absR[2][0] + m_v3HalfWidth[2] * absR[0][0];
+	rb = a_pOther->m_v3HalfWidth[1] * absR[1][2] + a_pOther->m_v3HalfWidth[2] * absR[1][1];
+	if (abs(t[0] * r[2][0] - t[2] * r[0][0]) > ra + rb) return 1;
+
+	// Test axis L = A1 x B1
+	ra = m_v3HalfWidth[0] * absR[2][1] + m_v3HalfWidth[2] * absR[0][1];
+	rb = a_pOther->m_v3HalfWidth[0] * absR[1][2] + a_pOther->m_v3HalfWidth[2] * absR[1][0];
+	if (abs(t[0] * r[2][1] - t[2] * r[0][1]) > ra + rb) return 1;
+
+	// Test axis L = A1 x B2
+	ra = m_v3HalfWidth[0] * absR[2][2] + m_v3HalfWidth[2] * absR[0][2];
+	rb = a_pOther->m_v3HalfWidth[0] * absR[1][1] + a_pOther->m_v3HalfWidth[1] * absR[1][0];
+	if (abs(t[0] * r[2][2] - t[2] * r[0][2]) > ra + rb) return 1;
+
+	// Test axis L = A2 x B0
+	ra = m_v3HalfWidth[0] * absR[1][0] + m_v3HalfWidth[1] * absR[0][0];
+	rb = a_pOther->m_v3HalfWidth[1] * absR[2][2] + a_pOther->m_v3HalfWidth[2] * absR[2][1];
+	if (abs(t[1] * r[0][0] - t[0] * r[1][0]) > ra + rb) return 1;
+
+	// Test axis L = A2 x B1
+	ra = m_v3HalfWidth[0] * absR[1][1] + m_v3HalfWidth[1] * absR[0][1];
+	rb = a_pOther->m_v3HalfWidth[0] * absR[2][2] + a_pOther->m_v3HalfWidth[2] * absR[2][0];
+	if (abs(t[1] * r[0][1] - t[0] * r[1][1]) > ra + rb) return 1;
+
+	// Test axis L = A2 x B2
+	ra = m_v3HalfWidth[0] * absR[1][2] + m_v3HalfWidth[1] * absR[0][2];
+	rb = a_pOther->m_v3HalfWidth[0] * absR[2][1] + a_pOther->m_v3HalfWidth[1] * absR[2][0];
+	if (abs(t[1] * r[0][2] - t[0] * r[1][2]) > ra + rb) return 1;
 
 
 	//there is no axis test that separates this two objects
