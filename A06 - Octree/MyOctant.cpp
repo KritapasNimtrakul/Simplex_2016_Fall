@@ -102,15 +102,23 @@ vector3 Simplex::MyOctant::GetMaxGlobal(void)
 
 bool Simplex::MyOctant::IsColliding(uint a_uRBIndex)
 {
+	if (m_pEntityMngr->GetEntity(a_uRBIndex)->IsColliding)
+	{
+		return true;
+	}
 	return false;
 }
 
 void Simplex::MyOctant::Display(uint a_nIndex, vector3 a_v3Color)
 {
+	vector3 m_v3HalfWidth = (m_lChild[a_nIndex]->m_v3Max - m_lChild[a_nIndex]->m_v3Min) / 2.0f;
+	m_pMeshMngr->AddWireCubeToRenderList(glm::translate(IDENTITY_M4, m_lChild[a_nIndex]->m_v3Center) * glm::scale(m_v3HalfWidth * 2.0f), a_v3Color);
 }
 
 void Simplex::MyOctant::Display(vector3 a_v3Color)
 {
+	vector3 m_v3HalfWidth = (m_v3Max - m_v3Min) / 2.0f;
+	m_pMeshMngr->AddWireCubeToRenderList(glm::translate(IDENTITY_M4, m_v3Center) * glm::scale(m_v3HalfWidth * 2.0f), a_v3Color);
 }
 
 void Simplex::MyOctant::DisplayLeafs(vector3 a_v3Color)
