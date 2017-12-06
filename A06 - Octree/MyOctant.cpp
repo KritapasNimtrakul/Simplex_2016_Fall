@@ -39,14 +39,14 @@ MyOctant::MyOctant(uint a_nMaxLevel, uint a_nIdealEntityCount)
 		}
 	}
 
-	vector3 v3Center = pRigidBody->GetCenterLocal();
+	vector3 v3Center = pRigidBody->GetCenterGlobal();
 	MinMaxBound.clear();
 	SafeDelete(pRigidBody);
 
 	m_fSize = fMax *2.0f;
 	m_v3Center = v3Center;
 	m_v3Min = m_v3Center - (vector3(fMax));
-	m_v3Min = m_v3Center + (vector3(fMax));
+	m_v3Max = m_v3Center + (vector3(fMax));
 
 	m_uOctantCount++;
 
@@ -167,31 +167,18 @@ bool MyOctant::IsColliding(uint a_uRBIndex)
 	vector3 v3Max = pRigidBody->GetMaxGlobal();
 
 	// check x
-	if (m_v3Max.x < v3Min.x)
-	{
-		return false;
-	}
-	if (m_v3Min.x > v3Max.x)
+	if (m_v3Max.x < v3Min.x || m_v3Min.x > v3Max.x)
 	{
 		return false;
 	}
 
 	// check y
-	if (m_v3Max.y < v3Min.y)
+	if (m_v3Max.y < v3Min.y || m_v3Min.y > v3Max.y)
 	{
 		return false;
 	}
-	if (m_v3Min.y > v3Max.y)
-	{
-		return false;
-	}
-
 	// check z
-	if (m_v3Max.z < v3Min.z)
-	{
-		return false;
-	}
-	if (m_v3Min.z > v3Max.z)
+	if (m_v3Max.z < v3Min.z || m_v3Min.z > v3Max.z)
 	{
 		return false;
 	}
@@ -325,7 +312,7 @@ bool MyOctant::IsLeaf(void)
 
 bool MyOctant::ContainsMoreThan(uint a_nEntities)
 {
-	uint count = 0;
+	uint count = 0; 
 	uint nObjectCount = m_pEntityMngr->GetEntityCount();
 	for (uint i = 0;i < nObjectCount;i++)
 	{
@@ -367,6 +354,8 @@ void MyOctant::ConstructTree(uint a_nMaxLevel)
 
 	KillBranches();
 	m_lChild.clear();
+
+	
 
 	if (ContainsMoreThan(m_uIdealEntityCount))
 	{
