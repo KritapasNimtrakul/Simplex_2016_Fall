@@ -63,6 +63,7 @@ void Application::Display(void)
 		m_pRoot->Display(m_uOctantID);
 	}
 	
+	
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();
 	
