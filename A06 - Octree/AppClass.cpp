@@ -64,6 +64,7 @@ void Application::Display(void)
 	}
 	
 	
+	
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();
 	

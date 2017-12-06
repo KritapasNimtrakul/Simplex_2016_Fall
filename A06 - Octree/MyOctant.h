@@ -7,7 +7,6 @@
 namespace Simplex
 {
 
-	//System Class
 	class MyOctant
 	{
 		static uint m_uOctantCount; //will store the number of MyOctants instantiated
